@@ -31,8 +31,11 @@ ENV POSTGRES_DB="**None**" \
     BACKUP_DELETE_MONTHS=true \
     BACKUP_MONTH_DAY="01" \
     BACKUP_WEEK_DAY="Sunday" \
-    HEALTHCHECK_PORT=8080
+    HEALTHCHECK_PORT=8080 \
+    WEBHOOK_URL="**None**" \
+    WEBHOOK_EXTRA_ARGS=""
 
+COPY hooks /hooks
 COPY backup.sh /backup.sh
 
 VOLUME /backups

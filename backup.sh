@@ -7,10 +7,23 @@ KEEP_MINS=${BACKUP_KEEP_MINS}
 KEEP_DAYS=${BACKUP_KEEP_DAYS}
 KEEP_WEEKS=`expr $((${BACKUP_KEEP_WEEKS} * 7))`
 KEEP_MONTHS=`expr $((${BACKUP_KEEP_MONTHS} * 31))`
-  
+
 setup () {
 
   set -Eeo pipefail
+
+  # Pre-backup hook
+  if [ -d "${HOOKS_DIR}" ]; then
+    run-parts -a "pre-backup" --exit-on-error "${HOOKS_DIR}"
+  fi
+
+  HOOKS_DIR="/hooks"
+  if [ -d "${HOOKS_DIR}" ]; then
+    on_error(){
+      run-parts -a "error" "${HOOKS_DIR}"
+    }
+    trap 'on_error' ERR
+  fi
 
   if [ "${POSTGRES_DB}" = "**None**" -a "${POSTGRES_DB_FILE}" = "**None**" ]; then
     echo "You need to set the POSTGRES_DB or POSTGRES_DB_FILE environment variable."
