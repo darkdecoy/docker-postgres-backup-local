@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -Eeo pipefail
-source /log.sh
+source log.sh
 
 export LOGDIR="${BACKUP_DIR}/logs"
 export DATETIME=`date +"%Y%m%d_%H%M%S"`
@@ -88,7 +88,7 @@ else
   exit 1
 fi
 
-if [ $MATRIX_VERBOSITY -gt 0 ]
+if [ $matrix_verbosity -gt 0 ]
 then
 
     if [ "${BACKUP_ELEMENT_SERVER}" = "**None**" ]; then
@@ -234,6 +234,8 @@ create_hardlinks () {
 
 #Clean up old backups
 cleanup_backups () {
+
+  einfo "Starting to clean up old backups..."
   
   for folder in "${FREQUENCY[@]}"
   do
