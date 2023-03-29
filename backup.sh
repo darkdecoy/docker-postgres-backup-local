@@ -241,16 +241,20 @@ cleanup_backups () {
   do
     if [ $folder == 'last' ]
     then
-      KEEP=$KEEP_MINS
+      time=$KEEP_MINS
+      keep=1
     elif [ $folder == 'daily' ]
     then
-      KEEP=$KEEP_DAYS
+      time=$KEEP_DAYS
+      keep=$KEEP_DAYS
     elif [ $folder == "weekly" ]
     then
-      KEEP=$KEEP_WEEKS
+      time=$KEEP_WEEKS
+      keep=`expr $(((${KEEP_WEEKS} - 1) / 7))`
     elif [ $folder == 'monthly' ]
     then
-      KEEP=$KEEP_MONTHS
+      time=$KEEP_MONTHS
+      keep=`expr $(((${KEEP_MONTHS} - 1) / 31))`
     fi
 
     for DB in ${POSTGRES_DBS}
@@ -259,20 +263,20 @@ cleanup_backups () {
       #Clean old files
       local all=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -name "${DB}-*" | sort -t/ -k3` )
       local files=()
-      number=$((${#all[@]}-$KEEP))
+      number=$((${#all[@]}-$keep))
       einfo "Number of Backups to be deleted: $number"
 
       if [ $number -le 0 ]
       then
         
-        ecrit "Only ${#all[@]} Backups exist for ${DB} and you want to keep $KEEP."
+        ecrit "Only ${#all[@]} Backups exist for ${DB} and you want to keep $keep."
         ecrit "If you have just started taking backups you may ignore this"
         ecrit "Otherwise you may want to investigate why backups are not being taken"
 
       elif [ "$number" -gt 0 ]
       then
 
-        local date=$(date +%Y%m%d --date "$keep days ago")
+        local date=$(date +%Y%m%d --date "$time days ago")
         date=$(date -d "$date")
         einfo "Cleaning files older than $date in ${folder} for ${DB} database from ${POSTGRES_HOST}..."
         date=$(date -d $date +%s)
