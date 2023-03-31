@@ -321,6 +321,16 @@ cleanup_backups () {
   done
 }
 
-einfo "Starting Backup..."
-create_backups
-cleanup_backups
+while getopts ":c" opt ; do
+        case $opt in
+        c)
+                einfo "Cleaning up old Backups..."
+                cleanup_backups
+                ;;
+        *)
+                einfo "Starting Backup..."
+                create_backups
+                cleanup_backups
+                ;;
+        esac
+done
