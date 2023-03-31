@@ -171,8 +171,6 @@ create_backups () {
     run-parts -a "post-backup" --reverse --exit-on-error "${HOOKS_DIR}"
   fi
 
-  Log_Close
-
 }
 
 #Create dump
@@ -321,16 +319,7 @@ cleanup_backups () {
   done
 }
 
-while getopts ":c" opt ; do
-        case $opt in
-        c)
-                einfo "Cleaning up old Backups..."
-                cleanup_backups
-                ;;
-        *)
-                einfo "Starting Backup..."
-                create_backups
-                cleanup_backups
-                ;;
-        esac
-done
+einfo "Starting Backup..."
+create_backups
+cleanup_backups
+Log_Close
