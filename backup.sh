@@ -264,14 +264,14 @@ cleanup_backups () {
       number=$((${#all[@]}-$keep))
       einfo "Number of Backups to be deleted: $number"
 
-      if [ $number -le 0 ]
+      if [[ $number -le 0 ]]
       then
         
         ecrit "Only ${#all[@]} Backups exist for ${DB} and you want to keep $keep."
         ecrit "If you have just started taking backups you may ignore this"
         ecrit "Otherwise you may want to investigate why backups are not being taken"
 
-      elif [ "$number" -gt 0 ]
+      elif [[ $number -gt 0 ]]
       then
 
         local date=$(date +%Y%m%d --date "$time days ago")
@@ -286,7 +286,7 @@ cleanup_backups () {
           einfo "Checking Backup: $backup"
           einfo "File Last Modified: $(date -r $backup)"
 
-          if [[ "$date" -ge "$filemod" ]]
+          if [[ $date -ge $filemod ]]
           then
 
             files=( $backup )
@@ -295,7 +295,7 @@ cleanup_backups () {
 
           fi
 
-          if [[ "$number" -le 0 ]]
+          if [[ $number -le 0 ]]
           then
 
             break
