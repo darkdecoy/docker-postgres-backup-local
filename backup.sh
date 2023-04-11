@@ -259,6 +259,7 @@ cleanup_backups () {
     do
 
       #Clean old files
+      edebug "Cleaning up backups of $DB database..."
       local all=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -name "${DB}-*" | sort -t/ -k3` )
       local files=()
       number=$((${#all[@]}-$keep))
@@ -274,6 +275,7 @@ cleanup_backups () {
       elif [[ $number -gt 0 ]]
       then
 
+        edebug "Getting Current Time and Date"
         local date=$(date +%Y%m%d --date "$time days ago")
         date=$(date -d "$date")
         einfo "Cleaning files older than $date in ${folder} for ${DB} database from ${POSTGRES_HOST}..."
@@ -282,6 +284,7 @@ cleanup_backups () {
         for backup in ${all[@]}
         do
 
+          edebug "Checking Modified Date of Backup"
           local filemod=$(date -r "$backup" +%s)
           einfo "Checking Backup: $backup"
           einfo "File Last Modified: $(date -r $backup)"
@@ -289,6 +292,7 @@ cleanup_backups () {
           if [[ $date -ge $filemod ]]
           then
 
+            edebug "Mark Backup for Deletion"
             files=( $backup )
 
             ((number--))
@@ -298,6 +302,7 @@ cleanup_backups () {
           if [[ $number -le 0 ]]
           then
 
+            edebug "...All Extra Backups have been marked for deletion"
             break
 
           fi
