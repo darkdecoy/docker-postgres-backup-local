@@ -240,18 +240,22 @@ cleanup_backups () {
     if [ $folder == 'last' ]
     then
       time=$KEEP_MINS
+      unit="minutes"
       keep=1
     elif [ $folder == 'daily' ]
     then
       time=$KEEP_DAYS
+      unit="days"
       keep=$KEEP_DAYS
     elif [ $folder == "weekly" ]
     then
       time=$KEEP_WEEKS
+      unit="days"
       keep=`expr $(((${KEEP_WEEKS} - 1) / 7))`
     elif [ $folder == 'monthly' ]
     then
       time=$KEEP_MONTHS
+      unit="days"
       keep=`expr $(((${KEEP_MONTHS} - 1) / 31))`
     fi
 
@@ -276,10 +280,10 @@ cleanup_backups () {
       then
 
         edebug "Getting Current Time and Date"
-        local date=$(date +%Y%m%d --date "$time days ago")
+        local date=$(date +%Y%m%d --date "$time $unit ago")
         date=$(date -d "$date")
         einfo "Cleaning files older than $date in ${folder} for ${DB} database from ${POSTGRES_HOST}..."
-        date=$(date -d $date +%s)
+        date=$(date -d "$date" +%s)
       
         for backup in ${all[@]}
         do
@@ -324,24 +328,27 @@ cleanup_backups () {
   done
 }
 
-while getopts ":cb" opt ; do
-# shellcheck disable=SC2220
-        case $opt in
-        b)
-                einfo "Starting Backup..."
-                create_backups
-                cleanup_backups
-                ;;
-        c)
-                einfo "Starting Cleanning Up Old Backups..."
-                cleanup_backups
-                ;;
-        *)
-                einfo "Starting Backup..."
-                create_backups
-                cleanup_backups
-                ;;
-        esac
+for arg in "$@"; do
+    case $arg in
+    -a)
+        einfo "Starting Backup..."
+        create_backups
+        cleanup_backups
+        ;;
+    -b)
+        einfo "Starting Backup..."
+        create_backups
+        ;;
+    -c)
+        einfo "Starting Cleanning Up Old Backups..."
+        cleanup_backups
+        ;;
+    *)
+        einfo "Starting Backup..."
+        create_backups
+        cleanup_backups
+        ;;
+    esac
 done
 
 edebug "...Backup Finished"
