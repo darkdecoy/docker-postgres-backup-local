@@ -265,7 +265,7 @@ cleanup_backups () {
       number=$((${#all[@]}-$keep))
       einfo "Number of Backups to be deleted: $number"
 
-      if [[ $number -le 0 ]]
+      if [[ $number -lt 0 ]]
       then
         
         ecrit "Only ${#all[@]} Backups exist for ${DB} and you want to keep $keep."
@@ -324,7 +324,26 @@ cleanup_backups () {
   done
 }
 
-einfo "Starting Backup..."
-create_backups
-cleanup_backups
+while getopts ":cb" opt ; do
+# shellcheck disable=SC2220
+        case $opt in
+        b)
+                einfo "Starting Backup..."
+                create_backups
+                cleanup_backups
+                ;;
+        c)
+                einfo "Starting Cleanning Up Old Backups..."
+                cleanup_backups
+                ;;
+        *)
+                einfo "Starting Backup..."
+                create_backups
+                cleanup_backups
+                ;;
+        esac
+done
+
+edebug "...Backup Finished"
+
 Log_Close
