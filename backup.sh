@@ -191,6 +191,9 @@ create_hardlinks () {
   SRC=$1
   INCREMENT=$2
 
+  edebug "Source: ${SRC}"
+  edebug "Increment: ${INCREMENT}"
+
   if [ "${INCREMENT}" = "daily" ]
   then
 
@@ -210,6 +213,10 @@ create_hardlinks () {
 
   DEST="${BACKUP_DIR}/${INCREMENT}/${FILENAME}"
 
+  edebug "Destionation: ${DEST}"
+
+  edebug "Creating Linking..."
+
   #Copy (hardlink) for each entry
   if [ -d "${SRC}" ]
   then
@@ -227,6 +234,8 @@ create_hardlinks () {
   # Update latest symlinks
   einfo "Replacing lastest ${INCREMENT} backup to this last backup..."
   ln -svf "${DEST}" "${BACKUP_DIR}/${INCREMENT}/${DB}-latest" | einfo
+
+  edebug "...Link has been created"
 
 }
 
