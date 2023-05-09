@@ -146,7 +146,7 @@ create_backups () {
     create_dump
 
     einfo "Point last backup file to this last backup..."
-    ln -svf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}" | einfo
+    ln -svf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}"
 
     create_hardlinks "${FILE}" "daily"
     
