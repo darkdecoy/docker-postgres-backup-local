@@ -324,13 +324,18 @@ cleanup_backups () {
 
       fi
 
-  	  for file in "${files[@]}"
-      do
+  	  if [ "${#files[@]}" -gt 0 ]
+      then
 
-        einfo "Deleting Backup: $file"
-  		  rm -r $file
+        for file in "${files[@]}"
+        do
 
-      done
+          einfo "Deleting Backup: $file"
+    		  rm -r $file
+
+        done
+      
+      fi
 
     done
 
