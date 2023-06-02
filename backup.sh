@@ -223,17 +223,17 @@ create_hardlinks () {
     DESTNEW="${DEST}-new"
     rm -rf "${DESTNEW}"
     mkdir "${DESTNEW}"
-    ln -f "${SRC}/"* "${DESTNEW}/" | einfo
+    ln -f "${SRC}/"* "${DESTNEW}/"
     rm -rf "${DEST}"
     einfo "Replacing ${INCREMENT} backup ${DEST} file this last backup..."
     mv "${DESTNEW}" "${DEST}"
   else
     einfo "Replacing ${INCREMENT} backup ${DEST} file this last backup..."
-    ln -vf "${SRC}" "${DEST}" | einfo
+    ln -vf "${SRC}" "${DEST}"
   fi
   # Update latest symlinks
   einfo "Replacing lastest ${INCREMENT} backup to this last backup..."
-  ln -svf "${DEST}" "${BACKUP_DIR}/${INCREMENT}/${DB}-latest" | einfo
+  ln -svf "${DEST}" "${BACKUP_DIR}/${INCREMENT}/${DB}-latest"
 
   edebug "...Link has been created"
 
@@ -250,22 +250,22 @@ cleanup_backups () {
     then
       time=$KEEP_MINS
       unit="minutes"
-      keep=1
+      keep=2
     elif [ $folder == 'daily' ]
     then
       time=$KEEP_DAYS
       unit="days"
-      keep=$KEEP_DAYS
+      keep=(${KEEP_DAYS} + 1)
     elif [ $folder == "weekly" ]
     then
       time=$KEEP_WEEKS
       unit="days"
-      keep=`expr $(((${KEEP_WEEKS} - 1) / 7))`
+      keep=`expr $(((${KEEP_WEEKS} - 1) / 7) + 1)`
     elif [ $folder == 'monthly' ]
     then
       time=$KEEP_MONTHS
       unit="days"
-      keep=`expr $(((${KEEP_MONTHS} - 1) / 31))`
+      keep=`expr $(((${KEEP_MONTHS} - 1) / 31) + 1)`
     fi
 
     for DB in ${POSTGRES_DBS}
