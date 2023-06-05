@@ -260,12 +260,12 @@ cleanup_backups () {
     then
       time=$KEEP_WEEKS
       unit="days"
-      keep=`expr $(((${KEEP_WEEKS} - 1) / 7) + 1)`
+      keep=`expr $(((${KEEP_WEEKS} - 1) / 7 + 1))`
     elif [ $folder == 'monthly' ]
     then
       time=$KEEP_MONTHS
       unit="days"
-      keep=`expr $(((${KEEP_MONTHS} - 1) / 31) + 1)`
+      keep=`expr $(((${KEEP_MONTHS} - 1) / 31 + 1))`
     fi
 
     for DB in ${POSTGRES_DBS}
