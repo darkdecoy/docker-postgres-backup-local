@@ -268,7 +268,7 @@ cleanup_backups () {
       keep=`expr $(((${KEEP_MONTHS} - 1) / 31 + 1))`
     fi
 
-    edebug "Keeping $keep backups over the past $time days"
+    edebug "Keeping $keep backups over the past $time $unit"
 
     if [[ $time -gt 1 ]]
     then
