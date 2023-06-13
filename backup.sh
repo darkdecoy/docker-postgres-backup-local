@@ -178,10 +178,10 @@ create_dump () {
 
   if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
     einfo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
-    pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip > "${FILE}"
+    pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip > "${FILE}" || echo ecrit "Postgres Dump Failed"
   else
     einfo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
-    pg_dump -d "${DB}" -f "${FILE}" ${POSTGRES_EXTRA_OPTS}
+    pg_dump -d "${DB}" -f "${FILE}" ${POSTGRES_EXTRA_OPTS} || echo ecrit "Postgres Dump Failed"
   fi
 
 }
