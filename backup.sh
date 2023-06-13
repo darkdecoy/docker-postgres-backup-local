@@ -268,9 +268,9 @@ cleanup_backups () {
       keep=`expr $(((${KEEP_MONTHS} - 1) / 31 + 1))`
     fi
 
-    edebug "Keeping $time backups over the past $keep days"
+    edebug "Keeping $keep backups over the past $time days"
 
-    if [[ $time -gt 0 ]]
+    if [[ $time -gt 1 ]]
     then
     
       for DB in ${POSTGRES_DBS}
