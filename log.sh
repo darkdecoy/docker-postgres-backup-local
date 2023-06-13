@@ -58,7 +58,7 @@ function elog() {
                 message="${message/\\$colpur/}"
                 message="${message/\\$colwht/}"
                 message="${message/\\$colrst/}"
-                ematrix "$message"
+                status=ematrix "$message"
         fi
 }
 
