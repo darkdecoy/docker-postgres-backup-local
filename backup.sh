@@ -268,76 +268,80 @@ cleanup_backups () {
       keep=`expr $(((${KEEP_MONTHS} - 1) / 31 + 1))`
     fi
 
-    for DB in ${POSTGRES_DBS}
-    do
+    if [[ $time -gt 0 ]]
+    
+      for DB in ${POSTGRES_DBS}
+      do
 
-      #Clean old files
-      edebug "Cleaning up backups of $DB database..."
-      local all=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -name "${DB}-*" | sort -t/ -k3` )
-      local files=()
-      number=$((${#all[@]}-$keep))
-      einfo "Number of Backups to be deleted: $number"
+        #Clean old files
+        edebug "Cleaning up backups of $DB database..."
+        local all=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -name "${DB}-*" | sort -t/ -k3` )
+        local files=()
+        number=$((${#all[@]}-$keep))
+        einfo "Number of Backups to be deleted: $number"
 
-      if [[ $number -lt 0 ]]
-      then
+        if [[ $number -lt 0 ]]
+        then
+          
+          ecrit "Only ${#all[@]} Backups exist for ${DB} and you want to keep $keep."
+          ecrit "If you have just started taking backups you may ignore this"
+          ecrit "Otherwise you may want to investigate why backups are not being taken"
+
+        elif [[ $number -gt 0 ]]
+        then
+
+          edebug "Getting Current Time and Date"
+          local date=$(date +%Y%m%d --date "$time $unit ago")
+          date=$(date -d "$date")
+          einfo "Cleaning files older than $date in ${folder} for ${DB} database from ${POSTGRES_HOST}..."
+          date=$(date -d "$date" +%s)
         
-        ecrit "Only ${#all[@]} Backups exist for ${DB} and you want to keep $keep."
-        ecrit "If you have just started taking backups you may ignore this"
-        ecrit "Otherwise you may want to investigate why backups are not being taken"
+          for backup in ${all[@]}
+          do
 
-      elif [[ $number -gt 0 ]]
-      then
+            edebug "Checking Modified Date of Backup"
+            local filemod=$(date -r "$backup" +%s)
+            einfo "Checking Backup: $backup"
+            einfo "File Last Modified: $(date -r $backup)"
 
-        edebug "Getting Current Time and Date"
-        local date=$(date +%Y%m%d --date "$time $unit ago")
-        date=$(date -d "$date")
-        einfo "Cleaning files older than $date in ${folder} for ${DB} database from ${POSTGRES_HOST}..."
-        date=$(date -d "$date" +%s)
-      
-        for backup in ${all[@]}
-        do
+            if [[ $date -ge $filemod ]]
+            then
 
-          edebug "Checking Modified Date of Backup"
-          local filemod=$(date -r "$backup" +%s)
-          einfo "Checking Backup: $backup"
-          einfo "File Last Modified: $(date -r $backup)"
+              edebug "Mark Backup for Deletion"
+              files=( $backup )
 
-          if [[ $date -ge $filemod ]]
-          then
+              ((number--))
 
-            edebug "Mark Backup for Deletion"
-            files=( $backup )
+            fi
 
-            ((number--))
+            if [[ $number -le 0 ]]
+            then
 
-          fi
+              edebug "...All Extra Backups have been marked for deletion"
+              break
 
-          if [[ $number -le 0 ]]
-          then
+            fi
 
-            edebug "...All Extra Backups have been marked for deletion"
-            break
+          done
 
-          fi
+        fi
 
-        done
+    	  if [ "${#files[@]}" -gt 0 ]
+        then
 
-      fi
+          for file in "${files[@]}"
+          do
 
-  	  if [ "${#files[@]}" -gt 0 ]
-      then
+            einfo "Deleting Backup: $file"
+      		  rm -r $file
 
-        for file in "${files[@]}"
-        do
+          done
+        
+        fi
 
-          einfo "Deleting Backup: $file"
-    		  rm -r $file
+      done
 
-        done
-      
-      fi
-
-    done
+    fi
 
   done
 }
