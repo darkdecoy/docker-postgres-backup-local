@@ -250,22 +250,22 @@ cleanup_backups () {
     then
       time=$KEEP_MINS
       unit="minutes"
-      keep=2
+      keep=1
     elif [ $folder == 'daily' ]
     then
       time=$KEEP_DAYS
       unit="days"
-      keep=(${KEEP_DAYS} + 1)
+      keep=(${KEEP_DAYS})
     elif [ $folder == "weekly" ]
     then
       time=$KEEP_WEEKS
       unit="days"
-      keep=`expr $(((${KEEP_WEEKS} - 1) / 7 + 1))`
+      keep=`expr $((${KEEP_WEEKS} - 1) / 7)`
     elif [ $folder == 'monthly' ]
     then
       time=$KEEP_MONTHS
       unit="days"
-      keep=`expr $(((${KEEP_MONTHS} - 1) / 31 + 1))`
+      keep=`expr $((${KEEP_MONTHS} - 1) / 31)`
     fi
 
     edebug "Keeping $keep backups over the past $time $unit"
