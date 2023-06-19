@@ -270,7 +270,7 @@ cleanup_backups () {
 
     edebug "Keeping $keep backups over the past $time $unit"
 
-    if [[ $time -gt 1 ]]
+    if [[ $time -gt 0 ]]
     then
     
       for DB in ${POSTGRES_DBS}
