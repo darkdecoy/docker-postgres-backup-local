@@ -260,12 +260,12 @@ cleanup_backups () {
     then
       time=$KEEP_WEEKS
       unit="days"
-      keep=`expr $((${KEEP_WEEKS} - 1) / 7)`
+      keep=`expr $(((${KEEP_WEEKS} - 1) / 7))`
     elif [ $folder == 'monthly' ]
     then
       time=$KEEP_MONTHS
       unit="days"
-      keep=`expr $((${KEEP_MONTHS} - 1) / 31)`
+      keep=`expr $(((${KEEP_MONTHS} - 1) / 31))`
     fi
 
     edebug "Keeping $keep backups over the past $time $unit"
